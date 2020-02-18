@@ -3,7 +3,7 @@ package dbase
 import (
 	"database/sql"
 	"fmt"
-	"github.com/slevchyk/worker_srv/models"
+	"github.com/slevchyk/erp_mobile_main_srv/models"
 	"log"
 )
 
@@ -37,6 +37,4 @@ func InitDB(db *sql.DB) {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-
 }
