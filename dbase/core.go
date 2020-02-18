@@ -3,7 +3,7 @@ package dbase
 import (
 	"database/sql"
 	"fmt"
-	"github.com/slevchyk/erp_mobile_main_srv/models"
+	"github.com/slevchyk/worker_srv/models"
 	"log"
 )
 

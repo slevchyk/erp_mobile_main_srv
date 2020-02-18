@@ -2,7 +2,7 @@ package dbase
 
 import (
 	"database/sql"
-	"github.com/slevchyk/erp_mobile_main_srv/models"
+	"github.com/slevchyk/worker_srv/models"
 )
 
 func ScanCloudDBSettings(rows *sql.Rows, cs *models.CloudDBSettings) error {

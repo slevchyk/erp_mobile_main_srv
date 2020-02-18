@@ -5,29 +5,29 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
-	_ "github.com/lib/pq"
-	"github.com/slevchyk/erp_mobile_main_srv/dbase"
-	"github.com/slevchyk/erp_mobile_main_srv/models"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
+
+	_ "github.com/lib/pq"
+	"github.com/slevchyk/worker_srv/dbase"
+	"github.com/slevchyk/worker_srv/models"
 )
 
 var db *sql.DB
 var cfg models.Config
 
 func init() {
-
 	cfg = models.Config{
 		Auth: models.AuthConfig{
 			User:     "mobile",
 			Password: "Dq4fS^J&^nqQ(fg4",
 		},
-		DB:   models.DBConfig{
-			Name:     "worker",
-			User:     "postgres",
-			Password: "sierra",
+		DB: models.DBConfig{
+			Name:     "worker_main",
+			User:     "worker",
+			Password: "worker",
 		},
 	}
 
@@ -35,13 +35,13 @@ func init() {
 	dbase.InitDB(db)
 }
 
-func main()  {
+func main() {
 	defer db.Close()
 
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.HandleFunc("/api/getdbsettings", basicAuth(settingsHandler))
 
-	err := http.ListenAndServe(":7132", nil)
+	err := http.ListenAndServe(":8811", nil)
 	if err != nil {
 		panic(err)
 	}
@@ -153,4 +153,3 @@ func settingsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 }
-

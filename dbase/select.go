@@ -10,12 +10,12 @@ func SelectCloudSettingsByPhonePin(db *sql.DB, phone string, pin int) (*sql.Rows
 			s.srv_user,
 			s.srv_password
 		FROM
-			worker.public.cloud_users u
+			cloud_users u
 		LEFT JOIN 
-			worker.public.cloud_settings s
+			cloud_settings s
 			ON u.id_settings = s.id
 		WHERE
 			u.phone=$1
 			AND u.pin=$2`,
-			phone, pin)
+		phone, pin)
 }
