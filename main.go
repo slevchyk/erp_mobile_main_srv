@@ -11,8 +11,8 @@ import (
 	"strings"
 
 	_ "github.com/lib/pq"
-	"github.com/slevchyk/worker_srv/dbase"
-	"github.com/slevchyk/worker_srv/models"
+	"github.com/slevchyk/erp_mobile_main_srv/dbase"
+	"github.com/slevchyk/erp_mobile_main_srv/models"
 )
 
 var db *sql.DB

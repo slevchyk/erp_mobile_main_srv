@@ -1,4 +1,4 @@
-module github.com/slevchyk/worker_srv
+module github.com/slevchyk/erp_mobile_main_srv
 
 go 1.13
 
