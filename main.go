@@ -100,7 +100,8 @@ func webApp()  {
 	defer db.Close()
 
 	http.Handle("/favicon.ico", http.NotFoundHandler())
-	http.HandleFunc("/api/getdbsettings", basicAuth(settingsHandler))
+	http.HandleFunc("/api/getdbsettings", basicMobileAuth(settingsHandler))
+	http.HandleFunc("/api/clouddbuser", basicAPIAuth(settingsHandler))
 
 	err := http.ListenAndServe(":8811", nil)
 	if err != nil {
@@ -317,7 +318,30 @@ func loadConfiguration(file string) (models.Config, error) {
 }
 
 
-func basicAuth(pass func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+func basicMobileAuth(pass func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
+
+	return func(w http.ResponseWriter, r *http.Request) {
+
+		auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
+
+		if len(auth) != 2 || auth[0] != "Basic" {
+			http.Error(w, "authorization failed", http.StatusUnauthorized)
+			return
+		}
+
+		payload, _ := base64.StdEncoding.DecodeString(auth[1])
+		pair := strings.SplitN(string(payload), ":", 2)
+
+		if len(pair) != 2 || !validate(pair[0], pair[1]) {
+			http.Error(w, "authorization failed", http.StatusUnauthorized)
+			return
+		}
+
+		pass(w, r)
+	}
+}
+
+func basicAPIAuth(pass func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 

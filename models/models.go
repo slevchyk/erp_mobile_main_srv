@@ -7,14 +7,14 @@ type Config struct {
 }
 
 type AuthConfig struct {
-	User string
-	Password string
+	User string `json:"user"`
+	Password string `json:"password"`
 }
 
 type DBConfig struct {
-	Name string
-	User string
-	Password string
+	Name string `json:"name"`
+	User string `json:"user"`
+	Password string `json:"password"`
 }
 
 type winService struct {
@@ -36,4 +36,11 @@ type CloudDBSettings struct {
 	SrvIP string `json:"srv_ip"`
 	SrvUser string `json:"srv_user"`
 	SrvPassword string  `json:"srv_password"`
+}
+
+type CloudDBAuth struct {
+	ID int `json:"id"`
+	IDDB int `json:"iddb"`
+	User string `json:"user"`
+	Password string `json:"password"`
 }
