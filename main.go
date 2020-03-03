@@ -370,22 +370,14 @@ func settingsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	phone := requestParams["phone"]
-	pinStr := requestParams["pin"]
+	pin := requestParams["pin"]
 
 	if phone == "" {
 		responseMsg += fmt.Sprintln("phone is not specified")
 	}
 
-	if pinStr == "" {
-		responseMsg += fmt.Sprintln("pin is not specified")
-	}
-
-	var pin int
-	if responseMsg == "" {
-		pin, err = strconv.Atoi(pinStr)
-		if err != nil {
-			responseMsg += fmt.Sprintln(err)
-		}
+	if pin == "" {
+			responseMsg += fmt.Sprintln("pin is not specified")
 	}
 
 	if responseMsg != "" {
@@ -469,7 +461,7 @@ func clouddbuserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if cu.Phone == "" || cu.Pin == 0 {
+	if cu.Phone == "" || cu.Pin == "" {
 		http.Error(w, "phone or pin is empty", http.StatusBadRequest)
 		return
 	}

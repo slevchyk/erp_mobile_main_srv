@@ -27,7 +27,7 @@ type CloudDBUsers struct {
 	ID int `json:"id"`
 	IDSettings int `json:"id_settings"`
 	Phone string `json:"phone"`
-	Pin int `json:"pin"`
+	Pin string `json:"pin"`
 }
 
 type CloudDBSettings struct {

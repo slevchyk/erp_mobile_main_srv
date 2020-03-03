@@ -32,8 +32,8 @@ func InitDB(db *sql.DB) {
 		CREATE TABLE IF NOT EXISTS cloud_users (
 			id SERIAL PRIMARY KEY,
 			id_settings INT REFERENCES cloud_settings(id),
-			phone TEXT,			
-			pin INTEGER DEFAULT 0);`)
+			phone TEXT DEFAULT "",			
+			pin TEXT DEFAULT "");`)
 	if err != nil {
 		log.Fatal(err)
 	}

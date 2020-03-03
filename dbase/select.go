@@ -2,7 +2,7 @@ package dbase
 
 import "database/sql"
 
-func SelectCloudSettingsByPhonePin(db *sql.DB, phone string, pin int) (*sql.Rows, error) {
+func SelectCloudSettingsByPhonePin(db *sql.DB, phone, pin string) (*sql.Rows, error) {
 
 	return db.Query(`
 		SELECT 
