@@ -1,19 +1,26 @@
 package models
 
 type Config struct {
-	Auth AuthConfig
-	DB   DBConfig
+	Auth AuthConfig `json:"auth"`
+	DB   DBConfig `json:"db"`
+	WinService winService `json:"win_service"`
 }
 
 type AuthConfig struct {
-	User string
-	Password string
+	User string `json:"user"`
+	Password string `json:"password"`
 }
 
 type DBConfig struct {
-	Name string
-	User string
-	Password string
+	Name string `json:"name"`
+	User string `json:"user"`
+	Password string `json:"password"`
+}
+
+type winService struct {
+	Name        string `json:"name"`
+	LongName    string `json:"long_name"`
+	Description string `json:"description"`
 }
 
 type CloudDBUsers struct {
@@ -29,4 +36,11 @@ type CloudDBSettings struct {
 	SrvIP string `json:"srv_ip"`
 	SrvUser string `json:"srv_user"`
 	SrvPassword string  `json:"srv_password"`
+}
+
+type CloudDBAuth struct {
+	ID int `json:"id"`
+	IDDB int `json:"iddb"`
+	User string `json:"user"`
+	Password string `json:"password"`
 }

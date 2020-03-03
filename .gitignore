@@ -35,6 +35,7 @@ _testmain.go
 #visual studio code
 .vscode/
 debug
+__debug_bin
 
 # mac hidden files
 #.DS_Store
@@ -56,6 +57,7 @@ builds/**/images/*
 # security / ssl
 *.pem
 *.xxjson
+*.json
 *.crt
 *.key
 © 2020 GitHub, Inc.
