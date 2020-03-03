@@ -101,13 +101,15 @@ func webApp()  {
 
 	http.Handle("/favicon.ico", http.NotFoundHandler())
 	http.HandleFunc("/api/getdbsettings", basicMobileAuth(settingsHandler))
-	http.HandleFunc("/api/clouddbuser", basicAPIAuth(settingsHandler))
+	http.HandleFunc("/api/clouddbuser", clouddbuserHandler)
 
 	err := http.ListenAndServe(":8811", nil)
 	if err != nil {
 		panic(err)
 	}
 }
+
+
 
 func exePath() (string, error) {
 	prog := os.Args[0]
@@ -341,29 +343,6 @@ func basicMobileAuth(pass func(http.ResponseWriter, *http.Request)) func(http.Re
 	}
 }
 
-func basicAPIAuth(pass func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
-
-	return func(w http.ResponseWriter, r *http.Request) {
-
-		auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
-
-		if len(auth) != 2 || auth[0] != "Basic" {
-			http.Error(w, "authorization failed", http.StatusUnauthorized)
-			return
-		}
-
-		payload, _ := base64.StdEncoding.DecodeString(auth[1])
-		pair := strings.SplitN(string(payload), ":", 2)
-
-		if len(pair) != 2 || !validate(pair[0], pair[1]) {
-			http.Error(w, "authorization failed", http.StatusUnauthorized)
-			return
-		}
-
-		pass(w, r)
-	}
-}
-
 func validate(username, password string) bool {
 	if username == cfg.Auth.User && password == cfg.Auth.Password {
 		return true
@@ -446,4 +425,76 @@ func settingsHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
+}
+
+func clouddbuserHandler(w http.ResponseWriter, r *http.Request) {
+
+	auth := strings.SplitN(r.Header.Get("Authorization"), " ", 2)
+
+	if len(auth) != 2 || auth[0] != "Basic" {
+		http.Error(w, "authorization failed", http.StatusUnauthorized)
+		return
+	}
+
+	payload, _ := base64.StdEncoding.DecodeString(auth[1])
+	pair := strings.SplitN(string(payload), ":", 2)
+
+	rows, err := dbase.SelectCloudAuthDBByUSerPassword(db, pair[0], pair[1])
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	rows.Close()
+
+	if !rows.Next() {
+		http.Error(w, "authorization failed", http.StatusUnauthorized)
+		return
+	}
+
+	var ca models.CloudDBAuth
+	err = dbase.ScanCloudDBAuth(rows, &ca)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	bs, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var cu models.CloudDBUsers
+	err = json.Unmarshal(bs, &cu)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if cu.Phone == "" || cu.Pin == 0 {
+		http.Error(w, "phone or pin is empty", http.StatusBadRequest)
+		return
+	}
+
+	cu.IDSettings = ca.IDCloudDB
+
+	rows, err = dbase.SelectCloudSettingsByPhonePin(db, cu.Phone, cu.Pin)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	if rows.Next() {
+		_, err = dbase.UpdateCloudUser(db, cu)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	} else {
+		_, err = dbase.InsertCloudUser(db, cu)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	w.WriteHeader(http.StatusOK)
 }
