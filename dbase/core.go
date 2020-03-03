@@ -33,7 +33,17 @@ func InitDB(db *sql.DB) {
 			id SERIAL PRIMARY KEY,
 			id_settings INT REFERENCES cloud_settings(id),
 			phone TEXT,			
-			pin INT DEFAULT 0);`)
+			pin INTEGER DEFAULT 0);`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS cloud_db_auth (
+			id SERIAL PRIMARY KEY,
+			id_cloud_db INT REFERENCES cloud_settings(id),
+			cloud_user TEXT,			
+			cloud_password TEXT);`)
 	if err != nil {
 		log.Fatal(err)
 	}

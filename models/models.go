@@ -40,7 +40,7 @@ type CloudDBSettings struct {
 
 type CloudDBAuth struct {
 	ID int `json:"id"`
-	IDDB int `json:"iddb"`
-	User string `json:"user"`
-	Password string `json:"password"`
+	IDCloudDB int `json:"id_cloud_db"`
+	CloudUser string `json:"cloud_user"`
+	CloudPassword string `json:"cloud_password"`
 }
