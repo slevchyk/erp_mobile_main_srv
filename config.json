@@ -1,0 +1,16 @@
+{
+    "auth": {
+        "user": "mobile",
+        "password": "Dq4fS^J&^nqQ(fg4"
+    },
+    "db": {
+        "name": "worker_main",
+        "user": "worker",
+        "password": "worker"
+    },
+    "win_service": {
+        "name": "erp_main",
+        "long_name": "Enterprise main",
+        "description": "Go web server: My Enterprise main server"
+    }
+}
