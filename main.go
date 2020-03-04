@@ -13,14 +13,15 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
 	"golang.org/x/sys/windows/svc"
 	"golang.org/x/sys/windows/svc/debug"
 	"golang.org/x/sys/windows/svc/eventlog"
 	"golang.org/x/sys/windows/svc/mgr"
 
 	_ "github.com/lib/pq"
-	"github.com/slevchyk/erp_mobile_main_srv/models"
 	"github.com/slevchyk/erp_mobile_main_srv/dbase"
+	"github.com/slevchyk/erp_mobile_main_srv/models"
 )
 
 var cfg models.Config
@@ -96,7 +97,7 @@ func main() {
 	webApp()
 }
 
-func webApp()  {
+func webApp() {
 	defer db.Close()
 
 	http.Handle("/favicon.ico", http.NotFoundHandler())
@@ -108,8 +109,6 @@ func webApp()  {
 		panic(err)
 	}
 }
-
-
 
 func exePath() (string, error) {
 	prog := os.Args[0]
@@ -319,7 +318,6 @@ func loadConfiguration(file string) (models.Config, error) {
 	return config, nil
 }
 
-
 func basicMobileAuth(pass func(http.ResponseWriter, *http.Request)) func(http.ResponseWriter, *http.Request) {
 
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -377,7 +375,7 @@ func settingsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if pin == "" {
-			responseMsg += fmt.Sprintln("pin is not specified")
+		responseMsg += fmt.Sprintln("pin is not specified")
 	}
 
 	if responseMsg != "" {
@@ -435,7 +433,7 @@ func clouddbuserHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	rows.Close()
+	defer rows.Close()
 
 	if !rows.Next() {
 		http.Error(w, "authorization failed", http.StatusUnauthorized)
@@ -468,13 +466,23 @@ func clouddbuserHandler(w http.ResponseWriter, r *http.Request) {
 
 	cu.IDSettings = ca.IDCloudDB
 
-	rows, err = dbase.SelectCloudSettingsByPhonePin(db, cu.Phone, cu.Pin)
+	rows, err = dbase.SelectCloudUserByPhone(db, cu.Phone)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	if rows.Next() {
+
+		var existCloudUser models.CloudDBUsers
+		err = dbase.ScanCloudDBUser(rows, &existCloudUser)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		cu.ID = existCloudUser.ID
+
 		_, err = dbase.UpdateCloudUser(db, cu)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

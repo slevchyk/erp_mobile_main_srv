@@ -20,10 +20,26 @@ func SelectCloudSettingsByPhonePin(db *sql.DB, phone, pin string) (*sql.Rows, er
 		phone, pin)
 }
 
+func SelectCloudUserByPhone(db *sql.DB, phone string) (*sql.Rows, error) {
+
+	return db.Query(`
+		SELECT 
+			u.id,			
+			u.id_settings,
+			u.phone,
+			u.pin
+		FROM
+			cloud_users u		
+		WHERE
+			u.phone=$1`,
+		phone)
+}
+
 func SelectCloudAuthDBByUSerPassword(db *sql.DB, user, password string) (*sql.Rows, error) {
 
 	return db.Query(`
 		SELECT 
+			a.id,
 			a.id_cloud_db,
 		    a.cloud_user,
 		    a.cloud_password
@@ -34,4 +50,3 @@ func SelectCloudAuthDBByUSerPassword(db *sql.DB, user, password string) (*sql.Ro
 			AND a.cloud_password=$2`,
 		user, password)
 }
-

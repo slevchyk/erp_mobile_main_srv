@@ -3,8 +3,9 @@ package dbase
 import (
 	"database/sql"
 	"fmt"
-	"github.com/slevchyk/erp_mobile_main_srv/models"
 	"log"
+
+	"github.com/slevchyk/erp_mobile_main_srv/models"
 )
 
 func ConnectDB(cfg models.DBConfig) (*sql.DB, error) {
@@ -32,8 +33,8 @@ func InitDB(db *sql.DB) {
 		CREATE TABLE IF NOT EXISTS cloud_users (
 			id SERIAL PRIMARY KEY,
 			id_settings INT REFERENCES cloud_settings(id),
-			phone TEXT DEFAULT "",			
-			pin TEXT DEFAULT "");`)
+			phone TEXT DEFAULT '',			
+			pin TEXT DEFAULT '');`)
 	if err != nil {
 		log.Fatal(err)
 	}
